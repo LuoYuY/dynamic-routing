@@ -2,7 +2,7 @@ import telnetlib
 import time
 
 Host = "192.168.1.1"
-
+_UsermodTag = '>'
 #config Interface
 def configInt(router, password,intType,intId,ip,mask):
     print('start config int ')
@@ -50,8 +50,6 @@ def configRIP(router, password,net):
     tn.write(b'CISCO' + b'\n')
     tn.read_until(b'Router#')
     print("yes")
-    # tn.write(password.encode('utf-8') + b'\n')
-    # tn.read_until(b'Router#')
     tn.write(b'config terminal' + b'\n')
     print('config terminal')
     time.sleep(1)
@@ -65,11 +63,50 @@ def configRIP(router, password,net):
     print('finish subnet config')
     tn.close()
 
+def showIpRoute(router):
+    print('start config int ')
+    tn = telnetlib.Telnet(router, port=23, timeout=10)
+    tn.set_debuglevel(0)
+    tn.read_until(b'Password: ')
+    tn.write(b'CISCO' + b'\n')
+    tn.read_until(b'Router>')
+    print('login success')
+    tn.write(b'show ip route' + b'\n')
+    response = tn.read_until(_UsermodTag.encode())
+    print(response.decode())
+    tn.close()
+
+def debug(router):
+    print('start config int ')
+    tn = telnetlib.Telnet(router, port=23, timeout=10)
+    tn.set_debuglevel(0)
+    tn.read_until(b'Password: ')
+    tn.write(b'CISCO' + b'\n')
+    tn.read_until(b'Router>')
+    print('login success')
+    tn.write(b'enable' + b'\n')
+    tn.read_until(b'Password: ')
+    tn.write(b'CISCO' + b'\n')
+    tn.read_until(b'Router#')
+    print("yes")
+    # tn.write(b'config terminal' + b'\n')
+    print('config terminal')
+    time.sleep(1)
+    tn.write(b'debug ip packet' + b'\n')
+    time.sleep(1)
+    tn.write(b'undebug all')
+    response = tn.read_until(_UsermodTag.encode())
+    print(response.decode())
+    tn.close()
+
+
 #test dynamic route
 
 if __name__ == '__main__':
-    # configInt("2.2.2.5", "CISCO","s0","/0/1","192.168.2.2","255.255.255.0")
-    configRIP("2.2.2.3", "CISCO", "192.168.2.0")
+    # showIpRoute("2.2.2.3")
+    #   configInt("2.2.2.5", "CISCO","f0","/0","10.0.0.2","255.255.255.0")
+    #configRIP("2.2.2.3", "CISCO", "192.168.2.0")
+    debug("2.2.2.3")
     # 连接Telnet服务器
     # tn = telnetlib.Telnet(Host, port=23, timeout=10)
     # tn.set_debuglevel(0)
