@@ -62,10 +62,11 @@ def configRIP(router, password, netList):
     # time.sleep(1)
     tn.write(b'router rip' + b'\n')
     print('router rip')
-    # time.sleep(0.5)
+    time.sleep(0.5)
     for net in netList:
         tn.write(b'network ' + net.encode('utf-8') + b'\n')
         print('network ' + net)
+        time.sleep(0.3)
     # time.sleep(1)
     tn.write(b'exit' + b'\n')
     # time.sleep(1)
@@ -96,6 +97,51 @@ def showIpRoute(router, password):
     print('--- finish: get route --- ')
     return response.decode()
 
+def close(router, password) :
+    print('--- start: close --- ')
+    # login
+    tn = telnetlib.Telnet(router, port=23, timeout=10)
+    tn.set_debuglevel(0)
+    tn.read_until(b'Password: ')
+    tn.write(password.encode('utf-8') + b'\n')
+    tn.read_until(b'Router>')
+    print('login success')
+
+    tn.write(b'enable' + b'\n')
+    tn.read_until(b'Password: ')
+    tn.write(password.encode('utf-8') + b'\n')
+    tn.read_until(b'Router#')
+    tn.write(b'config terminal' + b'\n')
+    print('config terminal')
+    time.sleep(0.2)
+
+    tn.write(b'int f0/1' + b'\n')
+    time.sleep(0.2)
+    tn.write(b'no ip route-cache' + b'\n')
+    tn.write(b'exit' + b'\n')
+
+    tn.write(b'int s0/0/0'+b'\n')
+    time.sleep(0.2)
+    tn.write(b'no ip route-cache'+ b'\n')
+    tn.write(b'exit' + b'\n')
+
+    tn.write(b'int s0/0/1' + b'\n')
+    time.sleep(0.2)
+    tn.write(b'no ip route-cache' + b'\n')
+    tn.write(b'exit' + b'\n')
+
+
+
+    tn.write(b'exit' + b'\n')
+    tn.close()
+
+
+
+
+
+
+
+
 
 # debug
 def debug(router, password):
@@ -124,21 +170,23 @@ def debug(router, password):
 
 # test dynamic route
 if __name__ == '__main__':
-    # configInt("192.168.3.2", "CISCO", "f0", "/0", "10.0.0.1", "255.255.255.0")
+    # configInt("192.168.3.2", "CISCO", "f0", "/0", "11.0.0.1", "255.255.255.0")
     # configInt("192.168.3.2", "CISCO", "s0", "/0/0", "192.168.1.2", "255.255.255.0")
     # configInt("192.168.3.1", "CISCO", "s0", "/0/0", "192.168.1.1", "255.255.255.0")
     # configInt("192.168.3.1", "CISCO", "s0", "/0/1", "192.168.2.1", "255.255.255.0")
-    # configInt("192.168.3.3", "CISCO", "f0", "/0", "10.0.0.2", "255.255.255.0")
+    # configInt("192.168.3.3", "CISCO", "f0", "/0", "11.0.0.2", "255.255.255.0")
     # configInt("192.168.3.3", "CISCO", "s0", "/0/1", "192.168.2.2", "255.255.255.0")
-    #
-    rta = [ "192.168.1.0", "10.0.0.0"]
-    rtb = [ "192.168.1.0", "192.168.2.0", "192.168.3.0"]
-    rtc = [ "192.168.2.0", "10.0.0.0" ]
-    configRIP("192.168.3.2", "CISCO", rta)
-    configRIP("192.168.3.1", "CISCO", rtb)
-    configRIP("192.168.3.3", "CISCO", rtc)
+    # #
+    # rta = [ "192.168.1.0", "11.0.0.0"]
+    # rtb = [ "192.168.1.0", "192.168.2.0", "192.168.3.0"]
+    # rtc = [ "192.168.2.0", "11.0.0.0" ]
+    # configRIP("192.168.3.2", "CISCO", rta)
+    # configRIP("192.168.3.1", "CISCO", rtb)
+    # configRIP("192.168.3.3", "CISCO", rtc)
+    # time.sleep(0.3)
 
-    showIpRoute("192.168.3.1","CISCO")
-    # configInt("2.2.2.5", "CISCO","f0","/0","10.0.0.2","255.255.255.0")
-    # configRIP("2.2.2.3", "CISCO", "192.168.2.0")
-    # debug("2.2.2.3")
+    # showIpRoute("192.168.3.1","CISCO")
+
+    close("192.168.3.1","CISCO")
+
+    # debug("192.168.3.1","CISCO")
