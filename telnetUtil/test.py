@@ -117,6 +117,7 @@ def showInterface(router, password, intType, intId):
     print('--- finish: get route --- ')
     return response.decode()
 
+# 启动进程交换
 def close(router, password) :
     print('--- start: close --- ')
     # login
@@ -153,14 +154,8 @@ def close(router, password) :
     tn.close()
 
 
-
-
-
-
-
-
-
 # debug
+# 返回debug信息
 def debug(router, password, destNet, destIp):
     print('start config int ')
     tn = telnetlib.Telnet(router, port=23, timeout=10)
@@ -184,7 +179,6 @@ def debug(router, password, destNet, destIp):
     tn.write(b'debug ip packet 101' + b'\n')
     tn.write(b'ping ' + destIp.encode('utf-8') + b'\n')
     time.sleep(2)
-    print("njdsnjdshdhskdcj")
 
     tn.write(b'undebug all'+ b'\n')
     response = tn.read_until(b'All possible')
@@ -196,7 +190,6 @@ def debug(router, password, destNet, destIp):
     fh.close()
 
     tn.close()
-#     save response 
 
 # result :  result来自 showInterface(router, password, intType, intId)
 # 判断接口启用情况
@@ -214,6 +207,7 @@ def isUp(result) :
         print('None')
         return False
 
+# 子网掩码转换
 def exchange_maskint(mask_int):
     bin_arr = ['0' for i in range(32)]
     for i in range(mask_int):
@@ -225,6 +219,7 @@ def exchange_maskint(mask_int):
 
 # result :  result来自 showInterface(router, password, intType, intId)
 # 获取接口的ip和mask
+# 返回ip,mask
 def getIntIpMask(result) :
     pattern=re.compile(r'up')
     line = result.split('\n')[3]
@@ -251,13 +246,10 @@ if __name__ == '__main__':
     # configRIP("192.168.3.1", "CISCO", rtb)
     # configRIP("192.168.3.3", "CISCO", rtc)
     # time.sleep(0.3)
-
-
+    # # # #
     # showIpRoute("192.168.3.1","CISCO")
-
     # close("192.168.3.1","CISCO")
     # result = showInterface("192.168.3.1","CISCO",'s0', '/0/0')
-
     # isUp(result)
     # getIntIpMask(result)
     # debug("192.168.3.1","CISCO","10.0.0.0","10.0.0.1")
