@@ -161,7 +161,7 @@ def close(router, password) :
 
 
 # debug
-def debug(router, password, destNet,destIp):
+def debug(router, password, destNet, destIp):
     print('start config int ')
     tn = telnetlib.Telnet(router, port=23, timeout=10)
     tn.set_debuglevel(0)
@@ -188,7 +188,13 @@ def debug(router, password, destNet,destIp):
 
     tn.write(b'undebug all'+ b'\n')
     response = tn.read_until(b'All possible')
-    print(response.decode())
+
+    # save result to 'result.txt'
+    result = response.decode()
+    fh = open('result.txt', 'w', encoding='utf-8')
+    fh.write(result)
+    fh.close()
+
     tn.close()
 #     save response 
 
@@ -208,6 +214,15 @@ def isUp(result) :
         print('None')
         return False
 
+def exchange_maskint(mask_int):
+    bin_arr = ['0' for i in range(32)]
+    for i in range(mask_int):
+        bin_arr[i] = '1'
+    tmpmask = [''.join(bin_arr[i * 8:i * 8 + 8]) for i in range(4)]
+    tmpmask = [str(int(tmpstr, 2)) for tmpstr in tmpmask]
+    return '.'.join(tmpmask)
+
+
 # result :  result来自 showInterface(router, password, intType, intId)
 # 获取接口的ip和mask
 def getIntIpMask(result) :
@@ -216,11 +231,12 @@ def getIntIpMask(result) :
     ip_mask = line.split(' ')[5]
     print("ip_mask: "+ip_mask)
     ip = ip_mask.split('/')[0]
-    # if
-
+    mask = exchange_maskint(25)
+    return ip,mask
 
 # test dynamic route
 if __name__ == '__main__':
+    pass
     # configInt("192.168.3.2", "CISCO", "f0", "/0", "10.0.0.1", "255.255.255.0")
     # configInt("192.168.3.2", "CISCO", "s0", "/0/0", "192.168.1.2", "255.255.255.0")
     # configInt("192.168.3.1", "CISCO", "s0", "/0/0", "192.168.2.1", "255.255.255.0")
@@ -244,4 +260,4 @@ if __name__ == '__main__':
 
     # isUp(result)
     # getIntIpMask(result)
-    debug("192.168.3.1","CISCO","10.0.0.0","10.0.0.1")
+    # debug("192.168.3.1","CISCO","10.0.0.0","10.0.0.1")
