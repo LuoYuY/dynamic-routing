@@ -226,7 +226,8 @@ def getIntIpMask(result) :
     ip_mask = line.split(' ')[5]
     print("ip_mask: "+ip_mask)
     ip = ip_mask.split('/')[0]
-    mask = exchange_maskint(25)
+    mask_num = ip_mask.split('/')[1]
+    mask = exchange_maskint(mask_num)
     return ip,mask
 
 # test dynamic route
