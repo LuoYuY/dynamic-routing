@@ -227,12 +227,14 @@ def getIntIpMask(result) :
     print("ip_mask: "+ip_mask)
     ip = ip_mask.split('/')[0]
     mask_num = ip_mask.split('/')[1]
-    mask = exchange_maskint(mask_num)
+    mask = exchange_maskint(int(mask_num))
     return ip,mask
 
 # test dynamic route
 if __name__ == '__main__':
     pass
+
+
     # configInt("192.168.3.2", "CISCO", "f0", "/0", "10.0.0.1", "255.255.255.0")
     # configInt("192.168.3.2", "CISCO", "s0", "/0/0", "192.168.1.2", "255.255.255.0")
     # configInt("192.168.3.1", "CISCO", "s0", "/0/0", "192.168.2.1", "255.255.255.0")
